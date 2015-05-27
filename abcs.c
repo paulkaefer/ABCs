@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     int iFlag;
     for(iFlag = 0; iFlag < argc; iFlag++) {
         // commands: -upper (-lower is default); -letterFile FILE -inputFile FILE <code file>
-        // better: just pass string OR file
+        // better: just pass string for letters (file maybe as an option)
         if ( !strcmp(argv[iFlag], "-upper") || !strcmp(argv[iFlag], "-u")) {
             printf("using upper case letters\n");
             letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -63,6 +63,9 @@ int main(int argc, char* argv[]) {
     while ( !feof(codeFile) ) {
         currentCommand = (char)fgetc(codeFile);
         printf("%c", currentCommand);
+        // find character in letters using strchr
+        // if not in string, ignore
+        // if in string, go through switch statement to determine how to handle it
     }
 
     // closing stuff
