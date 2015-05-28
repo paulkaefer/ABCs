@@ -8,6 +8,11 @@
 #define MULTIPLY 3
 #define FUNCTION 4
 #define JUMP 5
+#define JUMP_Y 6
+#define JUMP_N 7
+#define BRANCH_0 8
+#define BRANCH_1 9
+#define WHILE 10
 
 // borrows from good example at http://www.sanfoundry.com/c-program-implement-queue-functions/
 struct node {
@@ -167,7 +172,59 @@ int main(int argc, char* argv[]) {
                 case 16:
                     ptr = head;
                     break;
+                case 17:
+                    printf("? ");
+                    input = getchar();
+                    while ( !( ('y' == input) || ('n' == input) ) ) {
+                        printf("Please enter y or n: ");
+                        input = getchar();
+                    }
+                    if ( 'y' == input ) {
+                        state = JUMP_Y;
+                    } else if ( 'n' == input ) {
+                        state = JUMP_N;
+                    } else {
+                        printf("Invalid input to q query: %c\n", input);
+                    }
+                    break;
+                case 18:
+                    // redundant; handled in state switch statement
+                    state = 0;
+                    break;
+                case 19:
+                    // redundant; handled in state switch statement
+                    state = 0;
+                    break;
+                case 20:
+                    if ( 0 == accumulator ) {
+                        state = BRANCH_0;
+                    } else if ( 1 == accumulator ){
+                        state = BRANCH_1;
+                    }
+                    break;
+                case 21:
+                    // redundant; handled in state switch statement
+                    state = 0;
+                    break;
+                case 22:
+                    // redundant; handled in state switch statement
+                    state = 0;
+                    break;
+                case 23:
+                    state = WHILE;
+                    break;
+                case 24:
+                    // redundant; handled in state switch statement
+                    state = 0;
+                    break;
+                case 25:
+                    printf("%d\n", accumulator);
+                    break;
+                case 26:
+                    ptr->value = 0;
+                    break;
                 default:
+                    // "comment"
                     break;
             }
         }
