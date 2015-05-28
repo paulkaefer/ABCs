@@ -62,7 +62,12 @@ int main(int argc, char* argv[]) {
 
     while ( !feof(codeFile) ) {
         currentCommand = (char)fgetc(codeFile);
-        printf("%c", currentCommand);
+        char * findCommand = strchr(letters, currentCommand);
+        if ( NULL != findCommand) {
+            printf("%c -- findCommand: %lu\n", currentCommand, findCommand-letters+1);
+        } else {
+            printf("%c -- comment\n", currentCommand);
+        }
         // find character in letters using strchr
         // if not in string, ignore
         // if in string, go through switch statement to determine how to handle it
