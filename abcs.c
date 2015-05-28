@@ -6,12 +6,17 @@
 #define ADD 1
 #define SUBTRACT 2
 #define MULTIPLY 3
+#define FUNCTION 4
+#define JUMP 5
 
 // borrows from good example at http://www.sanfoundry.com/c-program-implement-queue-functions/
 struct node {
     int value;
     struct node *next;
-} *front, *rear;
+    // bi-directional queue (a.k.a. linked list) to handle moving backwards
+    // this is essentially inspired by the "tape" in Brainfuck
+    struct node *prev;
+} *head, *ptr, *tail;
 
 void queueAdd(int value);
 void queueDelete();
@@ -34,6 +39,7 @@ int main(int argc, char* argv[]) {
 
     // setup values for executing code
     int accumulator = 0;
+    int input = 0;
     int state = 0;
 
     // parse parser directives
@@ -119,6 +125,47 @@ int main(int argc, char* argv[]) {
                     accumulator = 0;
                     break;
                 case 4:
+                    queueDelete();
+                    break;
+                case 5:
+                    printf("%d\n",ptr->value);
+                    ptr->value = 0;
+                    break;
+                case 6:
+                    state = FUNCTION;
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    printf("Paused -- hit ENTER to continue.");
+                    getchar();
+                    printf("\n");
+                    break;
+                case 9:
+                    input = getchar();
+                    queueAdd( (int)input );
+                    break;
+                case 10:
+                    state = JUMP;
+                    break;
+                case 11:
+                    // redundant; handled in state switch statement
+                    state = 0;
+                    break;
+                case 12:
+                    accumulator = ptr->value;
+                    break;
+                case 13:
+                    state = MULTIPLY;
+                    break;
+                case 14:
+                    ptr = ptr->next;
+                    break;
+                case 15:
+                    ptr = ptr->prev;
+                    break;
+                case 16:
+                    ptr = head;
                     break;
                 default:
                     break;
@@ -136,21 +183,23 @@ void queueAdd(int value) {
     temp = (struct node*)malloc(sizeof(struct node));
     temp->value = value;
     temp->next = NULL;
-    if ( NULL == rear ) {
-        front = rear = temp;
+    if ( NULL == tail ) {
+        head = tail = temp;
     } else {
-        rear->next = temp;
-        rear = temp;
+        tail->next = temp;
+        temp->prev = tail;
+        tail = temp;
     }
 }
 
 void queueDelete() {
     struct node *temp;
-    temp = front;
-    if ( NULL == front ) {
-        front = rear = NULL;
+    temp = head;
+    if ( NULL == head ) {
+        head = tail = NULL;
     } else {
-        front = front->next;
+        head = head->next;
+        head->prev = NULL;
         free(temp);
     }
 }
