@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DEBUG 0
+
 // states for code execution
 #define ADD 1
 #define SUBTRACT 2
@@ -133,8 +135,10 @@ int main(int argc, char* argv[]) {
                     queueDelete();
                     break;
                 case 5:
-                    printf("%d\n",ptr->value);
-                    ptr->value = 0;
+                    //printf("%d\n",ptr->value);
+                    //ptr->value = 0;
+                    printf("%c", 96+accumulator);
+                    accumulator = 0;
                     break;
                 case 6:
                     state = FUNCTION;
@@ -228,6 +232,11 @@ int main(int argc, char* argv[]) {
                     break;
             }
         }
+
+        if ( DEBUG ) {
+            printf("Command: %d, accumulator: %d\n", numCommand, accumulator);
+        }
+
     }
 
     // closing stuff
