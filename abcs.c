@@ -2,6 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+// states for code execution
+#define ADD 1
+#define SUBTRACT 2
+#define MULTIPLY 3
+
+// borrows from good example at http://www.sanfoundry.com/c-program-implement-queue-functions/
+struct node {
+    int value;
+    struct node *next;
+} *front, *rear;
+
+void queueAdd(int value);
+void queueDelete();
+
 int main(int argc, char* argv[]) {
 
     // set default options
@@ -10,10 +24,17 @@ int main(int argc, char* argv[]) {
     char* filename = NULL;
     char* letters = "abcdefghijklmnopqrstuvwxyz";
     char* version = "0.1";
+    char* findCommand;
+    int numCommand;
+
     // changed to 0 for help, version prints
     int interpretCode = 1;
     FILE *codeFile;
     char currentCommand = ' ';
+
+    // setup values for executing code
+    int accumulator = 0;
+    int state = 0;
 
     // parse parser directives
     int iFlag;
@@ -41,7 +62,7 @@ int main(int argc, char* argv[]) {
             printf("Version %s\n",version);
             interpretCode = 0;
         } else {
-            if (argc == iFlag + 1) {
+            if ( (argc > 1) && (argc == iFlag + 1) ) {
                 // end of arguments
                 filename = argv[iFlag];
             }
@@ -55,6 +76,7 @@ int main(int argc, char* argv[]) {
 
     if ( NULL == filename) {
         printf("Please specify a code file to interpret.\n");
+        exit(0);
     } else {
         //printf("Running file %s\n",filename);
         codeFile = fopen(filename, "r");
@@ -62,18 +84,74 @@ int main(int argc, char* argv[]) {
 
     while ( !feof(codeFile) ) {
         currentCommand = (char)fgetc(codeFile);
-        char * findCommand = strchr(letters, currentCommand);
+        findCommand = strchr(letters, currentCommand);
         if ( NULL != findCommand) {
-            printf("%c -- findCommand: %lu\n", currentCommand, findCommand-letters+1);
-        } else {
-            printf("%c -- comment\n", currentCommand);
+            numCommand = findCommand - letters + 1;
         }
-        // find character in letters using strchr
-        // if not in string, ignore
-        // if in string, go through switch statement to determine how to handle it
+        // else, ignore --> comment
+        
+        if ( state ) {
+            switch ( state ) {
+                case ADD:
+                    accumulator += numCommand;
+                    break;
+                case SUBTRACT:
+                    accumulator -= numCommand;
+                    break;
+                case MULTIPLY:
+                    accumulator *= numCommand;
+                    break;
+                default:
+                    printf("Unrecognized state %d.\n", state);
+                    break;
+            }
+            state = 0;
+        } else {
+
+            switch ( numCommand ) {
+                case 1:
+                    state = ADD;
+                    break;
+                case 2:
+                    state = SUBTRACT;
+                    break;
+                case 3:
+                    accumulator = 0;
+                    break;
+                case 4:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     // closing stuff
     fclose(codeFile);
     return 0;
 }
+
+void queueAdd(int value) {
+    struct node *temp;
+    temp = (struct node*)malloc(sizeof(struct node));
+    temp->value = value;
+    temp->next = NULL;
+    if ( NULL == rear ) {
+        front = rear = temp;
+    } else {
+        rear->next = temp;
+        rear = temp;
+    }
+}
+
+void queueDelete() {
+    struct node *temp;
+    temp = front;
+    if ( NULL == front ) {
+        front = rear = NULL;
+    } else {
+        front = front->next;
+        free(temp);
+    }
+}
+
