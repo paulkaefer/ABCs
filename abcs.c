@@ -100,144 +100,149 @@ int main(int argc, char* argv[]) {
         findCommand = strchr(letters, currentCommand);
         if ( NULL != findCommand) {
             numCommand = findCommand - letters + 1;
-        }
-        // else, ignore --> comment
-        
-        if ( state ) {
-            switch ( state ) {
-                case ADD:
-                    accumulator += numCommand;
-                    break;
-                case SUBTRACT:
-                    accumulator -= numCommand;
-                    break;
-                case MULTIPLY:
-                    accumulator *= numCommand;
-                    break;
-                default:
-                    printf("Unrecognized state %d.\n", state);
-                    break;
-            }
-            state = 0;
-        } else {
+            // else, ignore --> comment
 
-            switch ( numCommand ) {
-                case 1:
-                    state = ADD;
-                    break;
-                case 2:
-                    state = SUBTRACT;
-                    break;
-                case 3:
-                    accumulator = 0;
-                    break;
-                case 4:
-                    queueDelete();
-                    break;
-                case 5:
-                    //printf("%d\n",ptr->value);
-                    //ptr->value = 0;
-                    printf("%c", 96+accumulator);
-                    accumulator = 0;
-                    break;
-                case 6:
-                    state = FUNCTION;
-                    break;
-                case 7:
-                    break;
-                case 8:
-                    printf("Paused -- hit ENTER to continue.");
-                    getchar();
-                    printf("\n");
-                    break;
-                case 9:
-                    input = getchar();
-                    queueAdd( (int)input );
-                    break;
-                case 10:
-                    state = JUMP;
-                    break;
-                case 11:
-                    // redundant; handled in state switch statement
-                    state = 0;
-                    break;
-                case 12:
-                    accumulator = ptr->value;
-                    break;
-                case 13:
-                    state = MULTIPLY;
-                    break;
-                case 14:
-                    ptr = ptr->next;
-                    break;
-                case 15:
-                    ptr = ptr->prev;
-                    break;
-                case 16:
-                    ptr = head;
-                    break;
-                case 17:
-                    printf("? ");
-                    input = getchar();
-                    while ( !( ('y' == input) || ('n' == input) ) ) {
-                        printf("Please enter y or n: ");
-                        input = getchar();
-                    }
-                    if ( 'y' == input ) {
-                        state = JUMP_Y;
-                    } else if ( 'n' == input ) {
-                        state = JUMP_N;
-                    } else {
-                        printf("Invalid input to q query: %c\n", input);
-                    }
-                    break;
-                case 18:
-                    // redundant; handled in state switch statement
-                    state = 0;
-                    break;
-                case 19:
-                    // redundant; handled in state switch statement
-                    state = 0;
-                    break;
-                case 20:
-                    if ( 0 == accumulator ) {
-                        state = BRANCH_0;
-                    } else if ( 1 == accumulator ){
-                        state = BRANCH_1;
-                    }
-                    break;
-                case 21:
-                    // redundant; handled in state switch statement
-                    state = 0;
-                    break;
-                case 22:
-                    // redundant; handled in state switch statement
-                    state = 0;
-                    break;
-                case 23:
-                    state = WHILE;
-                    break;
-                case 24:
-                    // redundant; handled in state switch statement
-                    state = 0;
-                    break;
-                case 25:
-                    printf("%d\n", accumulator);
-                    break;
-                case 26:
-                    ptr->value = 0;
-                    break;
-                default:
-                    // "comment"
-                    break;
-            }
-        }
+         if ( state ) {
+             switch ( state ) {
+                 case ADD:
+                     accumulator += numCommand;
+                     break;
+                 case SUBTRACT:
+                     accumulator -= numCommand;
+                     break;
+                 case MULTIPLY:
+                     accumulator *= numCommand;
+                     break;
+                 default:
+                     printf("Unrecognized state %d.\n", state);
+                     break;
+             }
+             state = 0;
+         } else {
+ 
+             switch ( numCommand ) {
+                 case 1:
+                     state = ADD;
+                     break;
+                 case 2:
+                     state = SUBTRACT;
+                     break;
+                 case 3:
+                     accumulator = 0;
+                     break;
+                 case 4:
+                     queueDelete();
+                     break;
+                 case 5:
+                     if ( DEBUG ) { 
+                         printf("printing %d\n",accumulator);
+                     }
+ 
+                     printf("%c", 96+accumulator);
+                     accumulator = 0;
+                     break;
+                 case 6:
+                     state = FUNCTION;
+                     break;
+                 case 7:
+                     break;
+                 case 8:
+                     printf("Paused -- hit ENTER to continue.");
+                     getchar();
+                     printf("\n");
+                     break;
+                 case 9:
+                     input = getchar();
+                     queueAdd( (int)input );
+                     break;
+                 case 10:
+                     state = JUMP;
+                     break;
+                 case 11:
+                     // redundant; handled in state switch statement
+                     state = 0;
+                     break;
+                 case 12:
+                     accumulator = ptr->value;
+                     break;
+                 case 13:
+                     state = MULTIPLY;
+                     break;
+                 case 14:
+                     ptr = ptr->next;
+                     break;
+                 case 15:
+                     ptr = ptr->prev;
+                     break;
+                 case 16:
+                     ptr = head;
+                     break;
+                 case 17:
+                     printf("? ");
+                     input = getchar();
+                     while ( !( ('y' == input) || ('n' == input) ) ) {
+                         printf("Please enter y or n: ");
+                         input = getchar();
+                     }
+                     if ( 'y' == input ) {
+                         state = JUMP_Y;
+                     } else if ( 'n' == input ) {
+                         state = JUMP_N;
+                     } else {
+                         printf("Invalid input to q query: %c\n", input);
+                     }
+                     break;
+                 case 18:
+                     // redundant; handled in state switch statement
+                     state = 0;
+                     break;
+                 case 19:
+                     // redundant; handled in state switch statement
+                     state = 0;
+                     break;
+                 case 20:
+                     if ( 0 == accumulator ) {
+                         state = BRANCH_0;
+                     } else if ( 1 == accumulator ){
+                         state = BRANCH_1;
+                     }
+                     break;
+                 case 21:
+                     // redundant; handled in state switch statement
+                     state = 0;
+                     break;
+                 case 22:
+                     // redundant; handled in state switch statement
+                     state = 0;
+                     break;
+                 case 23:
+                     state = WHILE;
+                     break;
+                 case 24:
+                     // redundant; handled in state switch statement
+                     state = 0;
+                     break;
+                 case 25:
+                     printf("%d\n", accumulator);
+                     break;
+                 case 26:
+                     ptr->value = 0;
+                     break;
+                 default:
+                     // "comment"
+                     break;
+             }
+         }
 
-        if ( DEBUG ) {
-            printf("Command: %d, accumulator: %d\n", numCommand, accumulator);
-        }
+         if ( DEBUG ) {
+             printf("Command: %d, accumulator: %d\n", numCommand, accumulator);
+         }
 
-    }
+    
+        }// end if (for valid commands)
+    
+    }// end while loop
+
 
     // closing stuff
     fclose(codeFile);
