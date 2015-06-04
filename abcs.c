@@ -30,6 +30,9 @@ void queueDelete();
 
 int main(int argc, char* argv[]) {
 
+    // temp variables
+    int i = 0;
+
     // set default options
     int useLowercase = 1;
     int useLetterFile = 0;
@@ -45,9 +48,11 @@ int main(int argc, char* argv[]) {
     char currentCommand = ' ';
 
     // setup values for executing code
+    char code[1000];
     int accumulator = 0;
     int input = 0;
     int state = 0;
+    int programCounter = 0;
 
     // parse parser directives
     int iFlag;
@@ -91,16 +96,36 @@ int main(int argc, char* argv[]) {
         printf("Please specify a code file to interpret.\n");
         exit(0);
     } else {
-        //printf("Running file %s\n",filename);
+        printf("Running file %s\n",filename);
         codeFile = fopen(filename, "r");
     }
 
+    // initialize code array
+    for (i=0; i < sizeof(code)/sizeof(char); i++ ) {
+        code[i] = (char)0;
+    }
+
+    // parse code file first
+    i = 0;
     while ( !feof(codeFile) ) {
         currentCommand = (char)fgetc(codeFile);
         findCommand = strchr(letters, currentCommand);
         if ( NULL != findCommand) {
             numCommand = findCommand - letters + 1;
-            // else, ignore --> comment
+            code[i] = numCommand;
+            i++;
+            if (i > sizeof(code)/sizeof(char)) {
+                printf("This interpreter can currently only support code of length %lu.\n",sizeof(code)/sizeof(char));
+            }
+        }// else, ignore --> comment
+    }
+
+    printf("Code: %s\n",code);
+
+    while ( programCounter < (int)strlen(code) ) {
+
+         findCommand = strchr(letters, code[programCounter]);
+         numCommand = findCommand - letters + 1;
 
          if ( state ) {
              switch ( state ) {
@@ -237,12 +262,10 @@ int main(int argc, char* argv[]) {
          if ( DEBUG ) {
              printf("Command: %d, accumulator: %d\n", numCommand, accumulator);
          }
+        
+         programCounter++;
 
-    
-        }// end if (for valid commands)
-    
-    }// end while loop
-
+    } // end while loop for code execution
 
     // closing stuff
     fclose(codeFile);
