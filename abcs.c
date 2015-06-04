@@ -4,6 +4,9 @@
 
 #define DEBUG 0
 
+// eventually will be replaced when we allow code of arbitrary length
+#define VALID_CODE_LENGTH 1000
+
 // states for code execution
 #define ADD 1
 #define SUBTRACT 2
@@ -48,7 +51,7 @@ int main(int argc, char* argv[]) {
     char currentCommand = ' ';
 
     // setup values for executing code
-    char code[1000];
+    char code[VALID_CODE_LENGTH];
     int accumulator = 0;
     int input = 0;
     int state = 0;
@@ -96,12 +99,14 @@ int main(int argc, char* argv[]) {
         printf("Please specify a code file to interpret.\n");
         exit(0);
     } else {
-        printf("Running file %s\n",filename);
+        if ( DEBUG ) {
+            printf("Running file %s\n",filename);
+        }
         codeFile = fopen(filename, "r");
     }
 
     // initialize code array
-    for (i=0; i < sizeof(code)/sizeof(char); i++ ) {
+    for (i=0; i < VALID_CODE_LENGTH; i++ ) {
         code[i] = (char)0;
     }
 
@@ -111,16 +116,20 @@ int main(int argc, char* argv[]) {
         currentCommand = (char)fgetc(codeFile);
         findCommand = strchr(letters, currentCommand);
         if ( NULL != findCommand) {
-            numCommand = findCommand - letters + 1;
-            code[i] = numCommand;
+            code[i] = currentCommand;
             i++;
-            if (i > sizeof(code)/sizeof(char)) {
-                printf("This interpreter can currently only support code of length %lu.\n",sizeof(code)/sizeof(char));
+            if (i > VALID_CODE_LENGTH) {
+                printf("This interpreter can currently only support code of length %d.\n", VALID_CODE_LENGTH);
             }
         }// else, ignore --> comment
     }
 
-    printf("Code: %s\n",code);
+    if ( DEBUG ) {
+        // print out all code to be executed
+        for (i=0; i < VALID_CODE_LENGTH; i++) {
+            printf("%c",code[i]);
+        }
+    }
 
     while ( programCounter < (int)strlen(code) ) {
 
